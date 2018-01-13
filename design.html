@@ -1,0 +1,71 @@
+<html>
+<head>
+</head>
+<body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.4.23/p5.min.js"></script>
+
+<script type="text/javascript">
+
+const cWidth = window.innerWidth;
+const cHeight = window.innerHeight;
+const radius = 200;
+let gap = 0;
+let inc = 0.1;
+let s,t;
+let oldX,oldY,oldZ;
+
+function setup(){
+    createCanvas(cWidth,cHeight,WEBGL);
+    background(33,33,33);
+    
+    
+    setTimeout(changeGap,1000/30);
+    function changeGap(){
+        if (gap >= 180 || gap < 0) {
+            inc *= -1;
+        }
+        gap += inc;
+        setTimeout(changeGap,1000/30);
+    }
+};
+
+function draw(){
+    background(33,33,33);
+    rotateX(frameCount*0.005);
+    rotateZ(frameCount*0.005);
+    orbitControl();
+    
+    //ライト
+    const dirX = (mouseX / width - 0.5) *2;
+    const dirY = (mouseY / height - 0.5) *(-2);
+    pointLight(255, 250, 250, dirX, dirY, 0);
+    
+    s = t = 0;
+    while (s <= 180){
+        const radianS = radians(s);
+        const radianT = radians(t);
+        
+        const x = radius*cos(radianT)*sin(radianS);
+        const y = radius*sin(radianT)*sin(radianS);
+        const z = radius*cos(radianS);
+        
+        if (s > 0){
+            stroke(0,128,128);
+            line(oldX,oldY,oldZ,x,y,z);
+        }
+        push();
+        basicMaterial(0,128,128);
+        translate(x,y,z);
+        sphere(5);
+        pop();
+        oldX = x;
+        oldY = y;
+        oldZ = z;
+        s++;
+        t += gap;
+    }
+};
+</script>
+</body>
+</html>
